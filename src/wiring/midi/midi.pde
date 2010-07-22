@@ -3,6 +3,8 @@
 
 #define MSG_PLAY_PRESET 0x3C
 #define MSG_PLAY_STREAM 0x3E
+
+#define MSG_CONN_START 0x21
 #define MSG_END_MIDI 0xFE
 
 #define READ_PRESET 0
@@ -17,7 +19,7 @@ long count = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Started connection.");
+  Serial.print(MSG_CONN_START);
 }
 
 void loop() {
