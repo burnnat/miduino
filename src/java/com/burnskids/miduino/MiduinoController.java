@@ -39,7 +39,12 @@ public class MiduinoController implements SerialPortEventListener {
 	private InputStream midiFile;
 
 	public MiduinoController(CommPortIdentifier portId) throws PortInUseException, UnsupportedCommOperationException, IOException, TooManyListenersException {
+		this(portId, null);
+	}
+	
+	public MiduinoController(CommPortIdentifier portId, MiduinoStatusListener listener) throws PortInUseException, UnsupportedCommOperationException, IOException, TooManyListenersException {
 		this.portId = portId;
+		this.listener = listener;
 		
 		// open serial port, and use class name for the appName.
 		serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
@@ -58,11 +63,7 @@ public class MiduinoController implements SerialPortEventListener {
 		
 		checkAlive();
 		System.out.print("Checking connection...");
-	}
-	
-	public MiduinoController(CommPortIdentifier portId, MiduinoStatusListener listener) throws PortInUseException, UnsupportedCommOperationException, IOException, TooManyListenersException {
-		this(portId);
-		this.listener = listener;
+		
 	}
 	
 	public void checkAlive() throws IOException {
@@ -149,7 +150,8 @@ public class MiduinoController implements SerialPortEventListener {
 	private void setBusy(boolean busy) {
 		if(this.busy != busy) {
 			this.busy = busy;
-			listener.setStatus(busy);
+			if(listener != null)
+				listener.setStatus(busy);
 		}
 	}
 	
