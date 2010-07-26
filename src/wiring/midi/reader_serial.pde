@@ -1,4 +1,4 @@
-#define MSG_SEND_MORE 0xFF
+#include "msg.h"
 
 byte readSerialByte() {
   if(Serial.available() > 0) {

@@ -134,8 +134,12 @@ prog_uchar* presets[] = {presetOne, presetTwo, presetThree};
 int currentPreset;
 int presetIndex;
 
+int getPresetCount() {
+  return sizeof(presets) / sizeof(prog_uchar*);
+}
+
 void setPreset(int preset) {
-  currentPreset = preset < '0' ? preset : preset-'0';
+  currentPreset = preset;
   presetIndex = 0;
 }
 

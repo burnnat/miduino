@@ -20,6 +20,7 @@ public class SerialPortComboBox extends JComboBox {
 		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 		List<CommPortIdentifier> portsToShow = new ArrayList<CommPortIdentifier>();
 
+		portsToShow.add(null);
 		while (ports.hasMoreElements()) {
 			portsToShow.add(ports.nextElement());
 		}
@@ -38,7 +39,9 @@ public class SerialPortComboBox extends JComboBox {
 					setForeground(list.getForeground());
 				}
 				
-				if(value instanceof CommPortIdentifier)
+				if(value == null)
+					setText("[None]");
+				else if(value instanceof CommPortIdentifier)
 					setText(((CommPortIdentifier) value).getName());
 				else
 					setText((value == null) ? "" : value.toString());
@@ -47,6 +50,6 @@ public class SerialPortComboBox extends JComboBox {
 			}
 		});
 		
-		this.setSelectedIndex(-1);
+		this.setSelectedIndex(0);
 	}
 }

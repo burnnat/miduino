@@ -29,3 +29,7 @@ void playback(boolean noteOn, int index, int note, unsigned long delta) {
   lastMillis = millis();
   currFreq = freq;
 }
+
+void endPlayback() {
+  noTone(PLAYBACK_PIN);
+}

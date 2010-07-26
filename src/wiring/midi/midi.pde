@@ -1,11 +1,7 @@
+#include "msg.h"
+
 #define HEADER_CHUNK_ID 0x4D546864  // MThd
 #define TRACK_CHUNK_ID 0x4D54726B   // MTrk
-
-#define MSG_PLAY_PRESET 0x3C
-#define MSG_PLAY_STREAM 0x3E
-
-#define MSG_CONN_START 0x21
-#define MSG_END_MIDI 0xFE
 
 #define READ_PRESET 0
 #define READ_SERIAL 1
@@ -19,7 +15,6 @@ long count = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.print(MSG_CONN_START);
 }
 
 void loop() {
@@ -34,6 +29,10 @@ void loop() {
       case MSG_PLAY_STREAM:
         readMode = READ_SERIAL;
         break;
+      case MSG_CHECK_ALIVE:
+        Serial.write(MSG_CONFIRM_ALIVE);
+        Serial.write(getPresetCount());
+        return;
       default:
         return;
     }
@@ -44,12 +43,14 @@ void loop() {
       for(int i = 0; i < getTrackCount(); i++) {
         processChunk();
       }
+      endPlayback();
+      Serial.write(MSG_END_MIDI);
     }
     else {
       logs("MIDI file not format 0.");
+      Serial.write(MSG_ERR_MIDI_FORMAT);
     }
     
-    Serial.write(MSG_END_MIDI);
     Serial.flush();
   }
 }
