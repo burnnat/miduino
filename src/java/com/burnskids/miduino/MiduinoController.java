@@ -136,6 +136,8 @@ public class MiduinoController implements SerialPortEventListener {
 					case MSG_CONFIRM_ALIVE:
 						presetCount = chunk[++i]; 
 						System.out.println(" confirmed alive.");
+						if(listener != null)
+							listener.onLoad(this);
 						setBusy(false);
 						break;
 					case MSG_ERR_MIDI_FORMAT:

@@ -100,16 +100,13 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 	public void setSerialPort(CommPortIdentifier portId) {
 		if(portId != (controller == null ? null : controller.getPortId())) {
 			if(controller != null) {
-				System.out.println("Closing controller.");
 				controller.close();
 				controller = null;
 			}
 
 			if(portId != null) {
 				try {
-					System.out.println("New controller.");
 					controller = new MiduinoController(portId, this);
-					presetSpinner.setPresetCount(controller.getPresetCount());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -140,5 +137,10 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			frame.setSerialPort(((SerialPortIdWrapper) result).getPortID());
 			frame.setVisible(true);
 		}
+	}
+
+	@Override
+	public void onLoad(MiduinoController source) {
+		presetSpinner.setPresetCount(source.getPresetCount());
 	}
 }
