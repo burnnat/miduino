@@ -120,6 +120,11 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			control.setEnabled(!disabled);
 		}
 	}
+
+	@Override
+	public void onLoad(MiduinoController source) {
+		presetSpinner.setPresetCount(source.getPresetCount());
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
@@ -128,7 +133,7 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 		List<SerialPortIdWrapper> portsToShow = new ArrayList<SerialPortIdWrapper>();
 		while (ports.hasMoreElements()) {
-			portsToShow.add(new SerialPortIdWrapper(ports.nextElement()));	
+			portsToShow.add(new SerialPortIdWrapper(ports.nextElement()));
 		}
 		
 		Object result = JOptionPane.showInputDialog(frame, "Please choose a port:", "Port Selection", JOptionPane.PLAIN_MESSAGE, null, portsToShow.toArray(), portsToShow.get(0));
@@ -137,10 +142,8 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			frame.setSerialPort(((SerialPortIdWrapper) result).getPortID());
 			frame.setVisible(true);
 		}
-	}
-
-	@Override
-	public void onLoad(MiduinoController source) {
-		presetSpinner.setPresetCount(source.getPresetCount());
+		else {
+			System.exit(0);
+		}
 	}
 }
