@@ -1,5 +1,13 @@
-#define MAX_MELODY_LENGTH 8
-#define PLAYBACK_PIN 7
+#define PLAYBACK_SPEAKER 11
+#define PLAYBACK_G4 2
+#define PLAYBACK_A4 3
+#define PLAYBACK_B4 4
+#define PLAYBACK_C5 5
+#define PLAYBACK_D5 6
+#define PLAYBACK_E5 7
+#define PLAYBACK_F5 8
+#define PLAYBACK_FS5 9
+#define PLAYBACK_G5 10
 
 int currFreq = -1;
 unsigned long lastMillis;
@@ -14,22 +22,64 @@ void playback(boolean noteOn, int index, int note, unsigned long delta) {
       delay(lastMillis - currMillis + deltaMillis);
   }
   
-  if(noteOn) {
-    tone(PLAYBACK_PIN, freq);
-    logi("Playing note: ", note);
-  }
-  else if(freq == currFreq) {
-    noTone(PLAYBACK_PIN);
-    logi("Stopping note: ", note);
-  }
-  else {
-    logs("Ignoring event.");
-  }
+  doTone(note, freq, noteOn);
   
   lastMillis = millis();
-  currFreq = freq;
+}
+
+void doTone(int note, int freq, boolean start) {
+  switch(note) {
+    case NOTE_G4:
+      organNote(PLAYBACK_G4, start);
+      break;
+    case NOTE_A4:
+      organNote(PLAYBACK_A4, start);
+      break;
+    case NOTE_B4:
+      organNote(PLAYBACK_B4, start);
+      break;
+    case NOTE_C5:
+      organNote(PLAYBACK_C5, start);
+      break;
+    case NOTE_D5:
+      organNote(PLAYBACK_D5, start);
+      break;
+    case NOTE_E5:
+      organNote(PLAYBACK_E5, start);
+      break;
+    case NOTE_F5:
+      organNote(PLAYBACK_F5, start);
+      break;
+    case NOTE_FS5:
+      organNote(PLAYBACK_FS5, start);
+      break;
+    case NOTE_G5:
+      organNote(PLAYBACK_G5, start);
+      break;
+    default:
+      if(start) {
+        tone(PLAYBACK_SPEAKER, freq);
+        currFreq = freq;
+      }
+      else if(freq == currFreq) {
+        noTone(PLAYBACK_SPEAKER);
+      }
+  }
+}
+
+void organNote(int pin, boolean start) {
+  digitalWrite(pin, start ? HIGH : LOW);
 }
 
 void endPlayback() {
-  noTone(PLAYBACK_PIN);
+  organNote(PLAYBACK_G4, false);
+  organNote(PLAYBACK_A4, false);
+  organNote(PLAYBACK_B4, false);
+  organNote(PLAYBACK_C5, false);
+  organNote(PLAYBACK_D5, false);
+  organNote(PLAYBACK_E5, false);
+  organNote(PLAYBACK_F5, false);
+  organNote(PLAYBACK_FS5, false);
+  organNote(PLAYBACK_G5, false);
+  noTone(PLAYBACK_SPEAKER);
 }
