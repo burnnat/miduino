@@ -1,4 +1,3 @@
-#define PLAYBACK_SPEAKER 11
 #define PLAYBACK_G4 2
 #define PLAYBACK_A4 3
 #define PLAYBACK_B4 4
@@ -8,9 +7,24 @@
 #define PLAYBACK_F5 8
 #define PLAYBACK_FS5 9
 #define PLAYBACK_G5 10
+#define PLAYBACK_SPEAKER 11
 
 int currFreq = -1;
 unsigned long lastMillis;
+
+void preparePlayback() {
+  pinMode(PLAYBACK_G4, OUTPUT);
+  pinMode(PLAYBACK_A4, OUTPUT);
+  pinMode(PLAYBACK_B4, OUTPUT);
+  pinMode(PLAYBACK_C5, OUTPUT);
+  pinMode(PLAYBACK_D5, OUTPUT);
+  pinMode(PLAYBACK_E5, OUTPUT);
+  pinMode(PLAYBACK_F5, OUTPUT);
+  pinMode(PLAYBACK_FS5, OUTPUT);
+  pinMode(PLAYBACK_G5, OUTPUT);
+  pinMode(PLAYBACK_SPEAKER, OUTPUT);
+  clearPlayback();
+}
 
 void playback(boolean noteOn, int index, int note, unsigned long delta) {
   unsigned long deltaMillis = (delta * getMicrosecondsPerQuarterNote()) / (((long) getTimeDivision()) * 1000);
@@ -68,10 +82,10 @@ void doTone(int note, int freq, boolean start) {
 }
 
 void organNote(int pin, boolean start) {
-  digitalWrite(pin, start ? HIGH : LOW);
+  digitalWrite(pin, start ? LOW : HIGH);
 }
 
-void endPlayback() {
+void clearPlayback() {
   organNote(PLAYBACK_G4, false);
   organNote(PLAYBACK_A4, false);
   organNote(PLAYBACK_B4, false);

@@ -34,8 +34,20 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-
 		fileBrowser = new JFileChooser();
+		
+		JButton refreshButton = new JButton("Refresh");
+		refreshButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					MiduinoFrame.this.controller.checkAlive();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		alignComponent(refreshButton);
 		
 		presetSpinner = new PresetSelector("Play Preset");
 		presetSpinner.addActionListener(new ActionListener() {
@@ -78,6 +90,8 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		});
 
 		add(Box.createVerticalGlue());
+		add(refreshButton);
+		add(Box.createVerticalGlue());
 		for (JComponent control : controls) {
 			add(control);
 			add(Box.createVerticalStrut(5));
@@ -92,8 +106,12 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		setStatus(true);
 	}
 	
+	private void alignComponent(JComponent component) {
+		component.setAlignmentX(CENTER_ALIGNMENT);
+	}
+	
 	private void addControl(JComponent control) {
-		control.setAlignmentX(CENTER_ALIGNMENT);
+		alignComponent(control);
 		controls.add(control);
 	}
 

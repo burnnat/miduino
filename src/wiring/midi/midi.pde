@@ -15,6 +15,7 @@ long count = 0;
 
 void setup() {
   Serial.begin(9600);
+  preparePlayback();
 }
 
 void loop() {
@@ -43,7 +44,7 @@ void loop() {
       for(int i = 0; i < getTrackCount(); i++) {
         processChunk();
       }
-      endPlayback();
+      clearPlayback();
       Serial.write(MSG_END_MIDI);
     }
     else {

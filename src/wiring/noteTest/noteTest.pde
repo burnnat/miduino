@@ -1,14 +1,15 @@
+#define PIN_OUT 2
 
-void setup(){
-  pinMode(11, OUTPUT);
+void setup() {
   Serial.begin(9600);
+  pinMode(PIN_OUT, OUTPUT);
 }
 
-void loop(){
-  digitalWrite(11, HIGH);
+void loop() {
+  digitalWrite(PIN_OUT, HIGH);
   Serial.println("Note On");
   delay(1000);
-  digitalWrite(11, LOW);
+  digitalWrite(PIN_OUT, LOW);
   Serial.println("Note Off");
   delay(1000);
 }

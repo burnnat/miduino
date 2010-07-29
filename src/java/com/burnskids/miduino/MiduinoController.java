@@ -64,8 +64,6 @@ public class MiduinoController implements SerialPortEventListener {
 		System.out.println("<< Java Serial Listener Initialized >>");
 
 		checkAlive();
-		System.out.print("Checking connection...");
-
 	}
 	
 	public int getPresetCount() {
@@ -76,6 +74,8 @@ public class MiduinoController implements SerialPortEventListener {
 		checkBusy();
 
 		setBusy(true);
+
+		System.out.print("Checking connection...");
 		output.write(MSG_CHECK_ALIVE);
 	}
 
