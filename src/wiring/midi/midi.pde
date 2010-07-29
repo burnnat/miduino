@@ -52,7 +52,7 @@ void loop() {
       Serial.write(MSG_ERR_MIDI_FORMAT);
     }
     
-    Serial.flush();
+//    Serial.flush();
   }
 }
 

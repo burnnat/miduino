@@ -83,6 +83,7 @@ public class MiduinoController implements SerialPortEventListener {
 		checkBusy();
 
 		setBusy(true);
+		System.out.println("Playing preset " + presetNumber + "...");
 		output.write(MSG_PLAY_PRESET);
 		output.write(presetNumber);
 	}
@@ -93,6 +94,7 @@ public class MiduinoController implements SerialPortEventListener {
 		setBusy(true);
 		this.midiFile = new FileInputStream(file);
 
+		System.out.println("Streaming file " + file.getAbsolutePath() + "...");
 		output.write(MSG_PLAY_STREAM);
 		output.flush();
 
@@ -145,6 +147,7 @@ public class MiduinoController implements SerialPortEventListener {
 						setBusy(false);
 						break;
 					case MSG_END_MIDI:
+						System.out.println("Ended playback.");
 						setBusy(false);
 						break;
 					default:

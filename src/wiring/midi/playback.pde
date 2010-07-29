@@ -5,8 +5,8 @@
 #define PLAYBACK_D5 6
 #define PLAYBACK_E5 7
 #define PLAYBACK_F5 8
-#define PLAYBACK_FS5 9
-#define PLAYBACK_G5 10
+#define PLAYBACK_FS5 12
+#define PLAYBACK_G5 13
 #define PLAYBACK_SPEAKER 11
 
 int currFreq = -1;
@@ -82,7 +82,7 @@ void doTone(int note, int freq, boolean start) {
 }
 
 void organNote(int pin, boolean start) {
-  digitalWrite(pin, start ? LOW : HIGH);
+  digitalWrite(pin, start ? HIGH : LOW);
 }
 
 void clearPlayback() {
