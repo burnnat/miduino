@@ -9,6 +9,7 @@
 #define PLAYBACK_G5 13
 #define PLAYBACK_SPEAKER 11
 
+boolean firstNote = true;
 int currFreq = -1;
 unsigned long lastMillis;
 
@@ -30,8 +31,12 @@ void playback(boolean noteOn, int index, int note, unsigned long delta) {
   unsigned long deltaMillis = (delta * getMicrosecondsPerQuarterNote()) / (((long) getTimeDivision()) * 1000);
   int freq = getFreq(note);
   
-  if(currFreq != -1) {
+  if(firstNote) {
+    firstNote = false;
+  }
+  else {
     unsigned long currMillis = millis();
+    
     if(currMillis < lastMillis + deltaMillis)
       delay(lastMillis - currMillis + deltaMillis);
   }
@@ -96,4 +101,6 @@ void clearPlayback() {
   organNote(PLAYBACK_FS5, false);
   organNote(PLAYBACK_G5, false);
   noTone(PLAYBACK_SPEAKER);
+  firstNote = true;
+  currFreq = -1;
 }
