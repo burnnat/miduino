@@ -25,6 +25,9 @@ public class MidiString {
 					count = 0;
 				}
 			}
+			
+			if(count > 0)
+				System.out.println("  \"" + acc + "\"");
 		}
 	}
 }
