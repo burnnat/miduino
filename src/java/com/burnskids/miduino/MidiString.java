@@ -3,10 +3,13 @@ package com.burnskids.miduino;
 import java.io.FileInputStream;
 
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 
 public class MidiString {
 
 	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		
 		JFileChooser fileChooser = new JFileChooser();
 		
 		if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {

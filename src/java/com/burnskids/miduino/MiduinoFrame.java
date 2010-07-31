@@ -19,6 +19,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
@@ -146,6 +147,12 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		MiduinoFrame frame = new MiduinoFrame();
 		
 		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
