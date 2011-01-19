@@ -1,3 +1,9 @@
+/*
+ * Functions for controlling note playback, playing via physical pipe
+ * if the correctly pitched pipe exists, otherwise playing the note
+ * via speaker.
+ */
+
 #define PLAYBACK_G4 2
 #define PLAYBACK_A4 3
 #define PLAYBACK_B4 4

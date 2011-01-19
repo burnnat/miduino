@@ -14,6 +14,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.TooManyListenersException;
 
+/**
+ * Class to communicate with an Arduino board controlling an organ.
+ */
 public class MiduinoController implements SerialPortEventListener {
 	// Outgoing commands
 	private static final byte MSG_CHECK_ALIVE = (byte) 0x10;

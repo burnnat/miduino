@@ -1,3 +1,6 @@
+/*
+ * Define constant values for MIDI events, as given in the MIDI spec
+ */
 #define DELTA_TIME_VALUE_MASK 0x7F
 
 #define DELTA_TIME_END_MASK 0x80
@@ -39,6 +42,9 @@ int eventChannel;
 int parameter1;
 int parameter2;
 
+/*
+ * Reads an event type code from the currently open file, and handles it accordingly.
+ */
 int processEvent() {
   logDivision(false);
   
@@ -72,6 +78,7 @@ int processEvent() {
   logi("Event type", eventType);
   logi("Event channel", eventChannel);
   
+  // handle meta-events and track events separately
   if(eventType == (META_EVENT_TYPE & EVENT_TYPE_MASK) >> 4
      && eventChannel == (META_EVENT_TYPE & EVENT_CHANNEL_MASK)) {
     counter += processMetaEvent();
@@ -83,6 +90,12 @@ int processEvent() {
   return counter;
 }
 
+/*
+ * Reads a meta-event command and size from the file, performing the appropriate action
+ * for the command.
+ *
+ * NB: currently, only tempo changes are handled - all else is useless for our organ.
+ */
 int processMetaEvent() {
   int command = readByte();
   int size = readByte();
@@ -101,6 +114,10 @@ int processMetaEvent() {
   return size + 2;
 }
 
+/*
+ * Reads a track event from the file, either as a full event or in running mode (to
+ * be determined automatically), and takes appropriate playback action.
+ */
 int processTrackEvent(boolean runningMode, int lastByte) {
   int count = 0;
   

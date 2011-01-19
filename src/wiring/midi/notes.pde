@@ -1,3 +1,7 @@
+/*
+ * Handles note-on and note-off track events with the given values.
+ */
+
 int index = 0;
 
 unsigned long accDelta = 0;

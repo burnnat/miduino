@@ -2,6 +2,9 @@ int format;
 int trackCount;
 int timeDivision;
 
+/*
+ * Parses useful information out of the MIDI file header.
+ */
 void processHeader(long size) {
   // size should always be 6
   // do we want to bother checking?

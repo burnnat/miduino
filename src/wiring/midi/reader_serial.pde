@@ -1,3 +1,7 @@
+/*
+ * Functions for reading data from the serial port.
+ */
+
 #include "msg.h"
 
 byte readSerialByte() {

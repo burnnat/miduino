@@ -2,6 +2,10 @@ package com.burnskids.miduino;
 
 import gnu.io.CommPortIdentifier;
 
+/**
+ * Convenience class wrapping a {@link CommPortIdentifier}, with a nicer
+ * {@link #toString()} method for easier debugging.
+ */
 public class SerialPortIdWrapper {
 	private CommPortIdentifier portId;
 	

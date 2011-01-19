@@ -7,6 +7,14 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+/**
+ * A JPanel used to control the playback of a number of preset melodies on
+ * the organ controller. Contains a spinner to select a preset by number,
+ * converting between the zero-indexed preset numbers used on the device
+ * and a one-based system for display, as well as a button used to initiate
+ * playback. The playback action should be governed by an {@link ActionListener}
+ * attached to this element.
+ */
 public class PresetSelector extends JPanel {
 	
 	private static final long serialVersionUID = 1L;

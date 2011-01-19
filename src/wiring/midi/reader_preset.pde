@@ -1,3 +1,7 @@
+/*
+ * Functions for reading data from preset songs included here.
+ */
+
 #include <avr/pgmspace.h>
 
 PROGMEM prog_uchar presetOne[] = {

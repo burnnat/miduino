@@ -1,3 +1,9 @@
+/*
+ * Main file for MIDI library - handles communication with client
+ * and reading data from source MIDI file (whether a preset or streamed
+ * over the serial port).
+ */
+
 #include "msg.h"
 
 #define HEADER_CHUNK_ID 0x4D546864  // MThd

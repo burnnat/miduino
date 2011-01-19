@@ -5,6 +5,10 @@ import java.io.FileInputStream;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
+/**
+ * Utility class to convert a MIDI file to a hex string, for easy inclusion on the
+ * Arduino as a preset, through copy-paste into the wiring code.
+ */
 public class MidiString {
 
 	public static void main(String[] args) throws Exception {

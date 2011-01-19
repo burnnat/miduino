@@ -21,6 +21,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+/**
+ * Main class for the Miduino playback client.
+ */
 public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
 	private static final long serialVersionUID = 1L;
@@ -116,6 +119,13 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		controls.add(control);
 	}
 
+	/**
+	 * Sets the serial port currently in use.  Attempts to close the old port, if
+	 * one exists, and attempts to initiate a connection with a controller over the
+	 * new port.
+	 * 
+	 * @param portId
+	 */
 	public void setSerialPort(CommPortIdentifier portId) {
 		if(portId != (controller == null ? null : controller.getPortId())) {
 			if(controller != null) {
@@ -135,6 +145,7 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
 	@Override
 	public void setStatus(boolean disabled) {
+		// lock controls if controller is busy with playback
 		for (JComponent control : controls) {
 			control.setEnabled(!disabled);
 		}
@@ -142,9 +153,13 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
 	@Override
 	public void onLoad(MiduinoController source) {
+		// load preset selector panel with the correct preset count
 		presetSpinner.setPresetCount(source.getPresetCount());
 	}
 	
+	/**
+	 * Main program entry point.
+	 */
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		try {

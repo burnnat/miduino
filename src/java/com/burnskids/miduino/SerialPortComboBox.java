@@ -12,6 +12,12 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+/**
+ * A combo box used to select an appropriate {@link CommPortIdentifier} to
+ * use for communications. The box is auto-populated with the various ports
+ * available, and returns a {@link CommPortIdentifier} (or <code>null</code>)
+ * as it's selected object.
+ */
 public class SerialPortComboBox extends JComboBox {
 	private static final long serialVersionUID = 1L;
 

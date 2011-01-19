@@ -1,3 +1,7 @@
+/*
+ * Constants and functions for converting between MIDI note numbers and frequencies in Hz.
+ */
+
 #define FREQ_B0  31
 #define FREQ_C1  33
 #define FREQ_CS1 35
