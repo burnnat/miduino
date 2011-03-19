@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -20,6 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Main class for the Miduino playback client.
@@ -28,10 +30,13 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 
 	private static final long serialVersionUID = 1L;
 	private MiduinoController controller;
-	
+
 	private List<JComponent> controls = new ArrayList<JComponent>();
 	private PresetSelector presetSpinner;
 	private JFileChooser fileBrowser;
+	private JFileChooser folderBrowser;
+	private JButton sequenceButton;
+	private FileSequencePlayer sequencer;
 
 	public MiduinoFrame() {
 		super("Miduino");
@@ -39,20 +44,12 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		fileBrowser = new JFileChooser();
+		fileBrowser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileBrowser.setFileFilter(new FileNameExtensionFilter("MIDI Files", "mid"));
 		
-		JButton refreshButton = new JButton("Refresh");
-		refreshButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					MiduinoFrame.this.controller.checkAlive();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		alignComponent(refreshButton);
-		
+		folderBrowser = new JFileChooser();
+		folderBrowser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
 		presetSpinner = new PresetSelector("Play Preset");
 		presetSpinner.addActionListener(new ActionListener() {
 			@Override
@@ -66,7 +63,7 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		});
 		presetSpinner.setEnabled(false);
 		addControl(presetSpinner);
-		
+
 		JButton streamButton = new JButton("Stream Midi File");
 		streamButton.addActionListener(new ActionListener() {
 			@Override
@@ -83,6 +80,60 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			}
 		});
 		addControl(streamButton);
+
+		JButton folderButton = new JButton("Stream Midi Folder");
+		folderButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int result = folderBrowser.showOpenDialog(MiduinoFrame.this);
+
+				if(result == JFileChooser.APPROVE_OPTION) {
+					File selected = folderBrowser.getSelectedFile();
+					if(selected.isDirectory()) {
+						sequencer.clear();
+
+						File[] subfiles = selected.listFiles();
+						for (int i = 0; i < subfiles.length; i++) {
+							File subfile = subfiles[i];
+							String name = subfile.getName();
+							String ext = name.substring(name.length()-3, name.length());
+							if(ext.equalsIgnoreCase("mid"))
+								sequencer.addFile(subfile);
+						}
+					}
+					else {
+						System.out.println("Selected item is not a folder.");
+					}
+				}
+			}
+		});
+		addControl(folderButton);
+		
+		sequenceButton = new JButton("Play Sequence");
+		sequenceButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!sequencer.isInSequence()) {
+					sequencer.startSequence();
+					sequenceButton.setText("Stop Sequence");
+				}
+				else {
+					sequencer.stopSequence();
+					sequenceButton.setText("Play Sequence");
+				}
+			}
+		});
+		addControl(sequenceButton);
+		
+		JButton nextButton = new JButton("Play Next");
+		nextButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sequencer.setAutoLoop(true);
+				sequencer.playNextFile();
+			}
+		});
+		addControl(nextButton);
 		
 		JButton exitButton = new JButton("Exit");
 		exitButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -93,8 +144,6 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			}
 		});
 
-		add(Box.createVerticalGlue());
-		add(refreshButton);
 		add(Box.createVerticalGlue());
 		for (JComponent control : controls) {
 			add(control);
@@ -109,11 +158,11 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		setLocation((screen.width - getWidth()) / 2, (screen.height - getHeight()) / 2);
 		setStatus(true);
 	}
-	
+
 	private void alignComponent(JComponent component) {
 		component.setAlignmentX(CENTER_ALIGNMENT);
 	}
-	
+
 	private void addControl(JComponent control) {
 		alignComponent(control);
 		controls.add(control);
@@ -136,6 +185,8 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 			if(portId != null) {
 				try {
 					controller = new MiduinoController(portId, this);
+					sequencer = new FileSequencePlayer(controller);
+					controller.addStatusListener(this);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -149,6 +200,8 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		for (JComponent control : controls) {
 			control.setEnabled(!disabled);
 		}
+		
+		this.repaint();
 	}
 
 	@Override
@@ -156,7 +209,7 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		// load preset selector panel with the correct preset count
 		presetSpinner.setPresetCount(source.getPresetCount());
 	}
-	
+
 	/**
 	 * Main program entry point.
 	 */
@@ -167,17 +220,17 @@ public class MiduinoFrame extends JFrame implements MiduinoStatusListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		MiduinoFrame frame = new MiduinoFrame();
-		
+
 		Enumeration<CommPortIdentifier> ports = CommPortIdentifier.getPortIdentifiers();
 		List<SerialPortIdWrapper> portsToShow = new ArrayList<SerialPortIdWrapper>();
 		while (ports.hasMoreElements()) {
 			portsToShow.add(new SerialPortIdWrapper(ports.nextElement()));
 		}
-		
+
 		Object result = JOptionPane.showInputDialog(frame, "Please choose a port:", "Port Selection", JOptionPane.PLAIN_MESSAGE, null, portsToShow.toArray(), portsToShow.get(0));
-		
+
 		if(result != null) {
 			frame.setSerialPort(((SerialPortIdWrapper) result).getPortID());
 			frame.setVisible(true);

@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TooManyListenersException;
 
 /**
@@ -31,9 +33,10 @@ public class MiduinoController implements SerialPortEventListener {
 
 	private static final int TIME_OUT = 2000; // in milliseconds
 	private static final int DATA_RATE = 9600; // baud rate
+	private static final int SERIAL_BUFFER_SIZE = 64; // in bytes
 
 	private CommPortIdentifier portId;
-	private MiduinoStatusListener listener;
+	private List<MiduinoStatusListener> listeners;
 	private boolean busy = false;
 
 	private SerialPort serialPort;
@@ -49,7 +52,7 @@ public class MiduinoController implements SerialPortEventListener {
 
 	public MiduinoController(CommPortIdentifier portId, MiduinoStatusListener listener) throws PortInUseException, UnsupportedCommOperationException, IOException, TooManyListenersException {
 		this.portId = portId;
-		this.listener = listener;
+		this.listeners = new ArrayList<MiduinoStatusListener>();
 
 		// open serial port, and use class name for the appName.
 		serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
@@ -67,6 +70,14 @@ public class MiduinoController implements SerialPortEventListener {
 		System.out.println("<< Java Serial Listener Initialized >>");
 
 		checkAlive();
+	}
+	
+	public synchronized void addStatusListener(MiduinoStatusListener listener) {
+		listeners.add(listener);
+	}
+	
+	public synchronized void removeStatusListener(MiduinoStatusListener listener) {
+		listeners.remove(listener);
 	}
 	
 	public int getPresetCount() {
@@ -105,7 +116,7 @@ public class MiduinoController implements SerialPortEventListener {
 	}
 
 	public synchronized void sendFilePart() throws IOException {
-		byte[] buffer = new byte[127];
+		byte[] buffer = new byte[SERIAL_BUFFER_SIZE];
 		int len = midiFile.read(buffer);
 
 		if(len == -1)
@@ -141,8 +152,9 @@ public class MiduinoController implements SerialPortEventListener {
 					case MSG_CONFIRM_ALIVE:
 						presetCount = chunk[++i]; 
 						System.out.println(" confirmed alive.");
-						if(listener != null)
+						for (MiduinoStatusListener listener : listeners) {
 							listener.onLoad(this);
+						}
 						setBusy(false);
 						break;
 					case MSG_ERR_MIDI_FORMAT:
@@ -173,8 +185,10 @@ public class MiduinoController implements SerialPortEventListener {
 	private synchronized void setBusy(boolean busy) {
 		if(this.busy != busy) {
 			this.busy = busy;
-			if(listener != null)
+			
+			for (MiduinoStatusListener listener : listeners) {
 				listener.setStatus(busy);
+			}
 		}
 	}
 
